@@ -13,7 +13,9 @@ Pod::Spec.new do |s|
   s.source              = { :path => '.' }
   s.source_files        = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'OptimizelySwiftSDK', '5.2.1'
+  # Patched: use local fork of OptimizelySwiftSDK with NWPathMonitor crash fix
+  # The app's Podfile must add: pod 'OptimizelySwiftSDK', :path => '<path-to-swift-sdk-fork>'
+  s.dependency 'OptimizelySwiftSDK'
   s.platform            = :ios, '10.0'
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
