@@ -1,3 +1,18 @@
+> **This is a patched fork** of the Optimizely Flutter SDK, used to test a threading fix for an iOS 16 crash during SDK initialisation. To use this fork in a Flutter project:
+>
+> 1. In your app's `pubspec.yaml`, replace the published dependency with a path dependency:
+>    ```yaml
+>    optimizely_flutter_sdk:
+>      path: ../path/to/optimizely-flutter-sdk-fork
+>    ```
+> 2. In your app's `ios/Podfile`, add a local pod override for the patched Swift SDK **before** the `flutter_install_all_ios_pods` line:
+>    ```ruby
+>    pod 'OptimizelySwiftSDK', :path => '../path/to/optimizely-swift-sdk-fork'
+>    ```
+> 3. Run `flutter pub get`, then build as normal.
+>
+> See the companion repo's `feature/patched-sdk-verify` branch for a working example.
+
 # Optimizely Flutter SDK
 [![Pub Version](https://img.shields.io/pub/v/optimizely_flutter_sdk?color=blueviolet)](https://pub.dev/packages/optimizely_flutter_sdk)
 [![Pub](https://img.shields.io/pub/v/optimizely_flutter_sdk.svg)](https://pub.dev/packages/optimizely_flutter_sdk)
