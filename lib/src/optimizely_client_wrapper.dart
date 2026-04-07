@@ -55,6 +55,24 @@ class OptimizelyClientWrapper {
       logEventCallbacksById = {};
   static Map<String, Map<int, MultiUseCallback>> configUpdateCallbacksById = {};
 
+  /// Defensive wrapper around method channel calls. On iOS 16, native results
+  /// can be silently dropped (null return) when FlutterResult is called from a
+  /// background thread. This wrapper handles null gracefully instead of crashing.
+  static Future<Map<String, dynamic>> _invoke(
+      String method, Map<String, dynamic> args) async {
+    try {
+      final response = await _channel.invokeMethod(method, args);
+      if (response == null) {
+        return {'success': false, 'reason': 'Native returned null (iOS 16 channel issue)'};
+      }
+      return Map<String, dynamic>.from(response);
+    } on PlatformException catch (e) {
+      return {'success': false, 'reason': 'PlatformException: ${e.message}'};
+    } catch (e) {
+      return {'success': false, 'reason': 'Unexpected error: $e'};
+    }
+  }
+
   /// Starts Optimizely SDK (Synchronous) with provided sdkKey and options.
   static Future<BaseResponse> initializeClient(
       String sdkKey,
@@ -128,8 +146,7 @@ class OptimizelyClientWrapper {
       }
     });
 
-    final result = Map<String, dynamic>.from(
-        await _channel.invokeMethod(Constants.initializeMethod, requestDict));
+    final result = await _invoke(Constants.initializeMethod, requestDict);
     return BaseResponse(result);
   }
 
