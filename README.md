@@ -6,6 +6,8 @@ The only change is the addition of a `_invoke` helper in `lib/src/optimizely_cli
 
 ## Setup
 
+### 1. Update pubspec.yaml
+
 Replace the official `optimizely_flutter_sdk` dependency in your app's `pubspec.yaml`:
 
 ```yaml
@@ -20,10 +22,26 @@ dependency_overrides:
       ref: master
 ```
 
-Then run:
+### 2. Clear cached dependencies
+
+Flutter and CocoaPods cache the git dependency. To ensure the fork is picked up cleanly:
 
 ```bash
+# Clear Flutter's git package cache
+rm -rf ~/.pub-cache/git/optimizely-flutter-sdk-*
+rm -rf ~/.pub-cache/git/cache/optimizely-flutter-sdk-*
+
+# Resolve dependencies
 flutter pub get
+
+# Delete the iOS Podfile.lock so CocoaPods re-resolves native dependencies
+rm ios/Podfile.lock
 ```
 
-No other code changes are required — the fork is API-compatible with the official 3.4.1 release.
+### 3. Build
+
+```bash
+flutter build ios --no-codesign
+```
+
+No other code changes are required — the fork is API-compatible with the official v3.4.1 release.
